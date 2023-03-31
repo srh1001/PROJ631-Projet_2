@@ -43,25 +43,31 @@ public class NodeUser extends Node {
         Integer shortestLength = Integer.MAX_VALUE;
         NodeSystem closestNode = null;
         for (Node node : sys.getMapNodes().values()) {
-            if (node instanceof NodeSystem) {
-                Map<String, Object> result = sys.getShortestPath(this.getId(), node.getId());
-                Integer length = (Integer) result.get("length");
-                if (length < shortestLength) {
-                	shortestPath = result;
-                    shortestLength = length;
-                    closestNode = (NodeSystem) node;
-                }
+            if (node instanceof NodeSystem && ((NodeSystem) node).getMemoryCapacity() >= data.getSize()) {
+            	
+            	try {
+                    Map<String, Object> result = sys.getShortestPath(this.getId(), node.getId());
+                    Integer length = (Integer) result.get("length");
+                    if (length < shortestLength) {
+                    	shortestPath = result;
+                        shortestLength = length;
+                        closestNode = (NodeSystem) node;
+                    }
+            	} catch (IllegalStateException e) {
+            	    System.out.println("Error: " + e.getMessage());
+            	}
+
             }
         }
         
-        if (shortestPath == null) {
-            System.out.println("Error: no system nodes found");
-            return;
-        }
+        
         
         // Add data to system node with shortest path
+        if (closestNode != null) {
         closestNode.addStoredData(data);
         System.out.println("Data " + data.getId() + " placed at system node " + closestNode.getId() + " via path " + shortestPath);
+        }else {
+        	System.out.println("No system node with enough empty space for your data was found.");
+        }
     }
-    
 }

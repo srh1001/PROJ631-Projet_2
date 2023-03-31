@@ -13,10 +13,10 @@ public class Main {
 		user1.addInterestData(data1);
 		user1.addInterestData(data2);
 		
-		NodeSystem nsys1 = new NodeSystem("s1", 30);
-		NodeSystem nsys2 = new NodeSystem("s2", 40);
-		NodeSystem nsys3 = new NodeSystem("s3", 40);
-		NodeSystem nsys4 = new NodeSystem("s4", 20);
+		NodeSystem nsys1 = new NodeSystem("s1", 10);
+		NodeSystem nsys2 = new NodeSystem("s2", 20);
+		NodeSystem nsys3 = new NodeSystem("s3", 5);
+		NodeSystem nsys4 = new NodeSystem("s4", 25);
 		
 		
 		user1.addNeighbour(nsys1, 1);
@@ -45,17 +45,22 @@ public class Main {
 		
 		
 		Map<String, Object> result = sys.getShortestPath("u1", "s4");
-		System.out.println("Shortest path length: " + result.get("length"));
-		System.out.print("Shortest path nodes: ");
-		Map<String, Node> path = (LinkedHashMap<String, Node>) result.get("path");
-		for (Map.Entry<String, Node> entry : path.entrySet()) {
-		    System.out.print(entry.getValue().getId() + " ");
+		if (result == null) {
+		    System.out.println("No path was found.");
+		} else {
+			System.out.println("Shortest path length: " + result.get("length"));
+			System.out.print("Shortest path nodes: ");
+			Map<String, Node> path = (LinkedHashMap<String, Node>) result.get("path");
+			for (Map.Entry<String, Node> entry : path.entrySet()) {
+			    System.out.print(entry.getValue().getId() + " ");
+			}		
 		}
-		
-		//Pair<Integer, List<Node>> path = sys.getShortestPath(user1, nsys4);
 
-		//System.out.println("Shortest path length: " + path.getFirst());
-		//System.out.println("Shortest path nodes: " + path.getSecond().toString());
+		
+		System.out.println("\n");
+		user1.placeData("d1", sys);
+		
+
 
 	}
 }

@@ -2,7 +2,7 @@ package projet632_projet2_eclipse;
 
 import java.util.*;
 
-public class Sysapp { // a Sysapp is a graph in project.
+public class Sysapp { // a Sysapp is a graph in this code.
 	
 	private HashMap<String, Node> mapNodes = new HashMap<String, Node> (); // nodes of the graph, the key is the ID of the node.
 	
@@ -22,7 +22,6 @@ public class Sysapp { // a Sysapp is a graph in project.
 	public void addNode(Node node) {
 		this.mapNodes.put(node.getId(), node);
 	}
-	
 	
 	
 	public LinkedHashMap<String, Object> getShortestPath(String startNodeId, String endNodeId) {
@@ -61,6 +60,11 @@ public class Sysapp { // a Sysapp is a graph in project.
 	                queue.offer(neighborNode);
 	            }
 	        }
+	    }
+	    
+	    // Check if a path exists
+	    if (parents.get(endNode) == null) {
+	    	throw new IllegalStateException("No path was found.");
 	    }
 	    
 	    // Build the path from end to start
