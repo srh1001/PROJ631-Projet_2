@@ -1,4 +1,4 @@
-package proj631_projet2;
+package projet632_projet2_eclipse;
 
 public class Pair<A, B> {
     private final A first;

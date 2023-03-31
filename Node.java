@@ -1,45 +1,51 @@
-package proj631_projet2;
+package projet632_projet2_eclipse;
+
 import java.util.*;
 
 
 public class Node {
 	
-	private int id;
-	private HashMap<Integer, Pair<Node, Integer>> neighbours = new HashMap<>(); // The key is the ID of the neighbor and the pair<node, integer> contains the neighbour node and the distance between the current node and this neighbor.
+	private String id;
+	private HashMap<String, Pair<Node, Integer>> neighbours = new HashMap<>(); // The key is the ID of the neighbor and the pair<node, integer> contains the neighbour node and the distance between the current node and this neighbor.
 	
-	public Node(int id) {
+	public Node(String id) {
 		this.id = id;
 	}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public HashMap<Integer, Pair<Node, Integer>> getNeighbours() {
+	public HashMap<String, Pair<Node, Integer>> getNeighbours() {
 		return neighbours;
 	}
 	
-	public void setNeighbours(HashMap<Integer, Pair<Node, Integer>> neighbours) {
+	public void setNeighbours(HashMap<String, Pair<Node, Integer>> neighbours) {
 		this.neighbours = neighbours;
 	}
 
+	public void addNeighbour(Node node, Integer distance) {
+		Pair<Node, Integer> p = new Pair<Node, Integer> (node, distance);
+		neighbours.put(node.getId(), p);
+	}
+	
+	@Override
+	public String toString() {
+	    return "Node " + id;
+	}
+	
 	public void sortNeighborsByDistance() {
-	    List<Map.Entry<Integer, Pair<Node, Integer>>> entries = new ArrayList<>(neighbours.entrySet());
-
-	    Collections.sort(entries, new Comparator<Map.Entry<Integer, Pair<Node, Integer>>>() {
+	    List<Map.Entry<String, Pair<Node, Integer>>> sortedList = new ArrayList<>(neighbours.entrySet());
+	    Collections.sort(sortedList, new Comparator<Map.Entry<String, Pair<Node, Integer>>>() {
 	        @Override
-	        public int compare(Map.Entry<Integer, Pair<Node, Integer>> entry1, Map.Entry<Integer, Pair<Node, Integer>> entry2) {
-	            Integer dist1 = entry1.getValue().getSecond();
-	            Integer dist2 = entry2.getValue().getSecond();
-	            return dist1.compareTo(dist2);
+	        public int compare(Map.Entry<String, Pair<Node, Integer>> o1, Map.Entry<String, Pair<Node, Integer>> o2) {
+	            return o1.getValue().getSecond().compareTo(o2.getValue().getSecond());
 	        }
 	    });
-
-	    neighbours.clear();
-
-	    for (Map.Entry<Integer, Pair<Node, Integer>> entry : entries) {
+	    neighbours = new LinkedHashMap<>();
+	    for (Map.Entry<String, Pair<Node, Integer>> entry : sortedList) {
 	        neighbours.put(entry.getKey(), entry.getValue());
 	    }
 	}
-	
+
 }

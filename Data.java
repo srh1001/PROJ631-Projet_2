@@ -1,16 +1,16 @@
-package proj631_projet2;
+package projet632_projet2_eclipse;
 
 public class Data {
 	
-    private int id;
+    private String id;
     private int size;
 
-    public Data(int id, int size) {
+    public Data(String id, int size) {
         this.id = id;
         this.size = size;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

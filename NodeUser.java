@@ -1,21 +1,67 @@
-package proj631_projet2;
+package projet632_projet2_eclipse;
+
 import java.util.*;
 
 public class NodeUser extends Node {
-    private int id;
-    private HashMap<Integer, Data> interestData;
+    private String id;
+    private HashMap<String, Data> interestData = new HashMap<String, Data> ();
+
     
-    public NodeUser(int id, HashMap<Integer, Data> interestData) {
+    public NodeUser(String id) {
     	super(id); // call the constructor of the superclass with the id argument
-        this.interestData = interestData;
+    	this.id = id;
+    }
+    
+    public NodeUser(String id, HashMap<String, Data> interestData) {
+    	super(id); // call the constructor of the superclass with the id argument
+        this.id = id;
+    	this.interestData = interestData;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public HashMap<Integer, Data> getInterestData() {
+    public HashMap<String, Data> getInterestData() {
         return interestData;
     }
+    
+    public void addInterestData(Data data) {
+    	interestData.put(data.getId(), data);
+    }
 
+    public void placeData(String idData, Sysapp sys) {
+        // Get the data object with the given ID
+        Data data = this.interestData.get(idData);
+        if (data == null) {
+            System.out.println("Error: data with ID " + idData + " does not exist for this user.");
+            return;
+        }
+        
+        // Calculate shortest path to each system node
+        Map<String, Object> shortestPath = null;
+        Integer shortestLength = Integer.MAX_VALUE;
+        NodeSystem closestNode = null;
+        for (Node node : sys.getMapNodes().values()) {
+            if (node instanceof NodeSystem) {
+                Map<String, Object> result = sys.getShortestPath(this.getId(), node.getId());
+                Integer length = (Integer) result.get("length");
+                if (length < shortestLength) {
+                	shortestPath = result;
+                    shortestLength = length;
+                    closestNode = (NodeSystem) node;
+                }
+            }
+        }
+        
+        if (shortestPath == null) {
+            System.out.println("Error: no system nodes found");
+            return;
+        }
+        
+        // Add data to system node with shortest path
+        closestNode.addStoredData(data);
+        System.out.println("Data " + data.getId() + " placed at system node " + closestNode.getId() + " via path " + shortestPath);
+    }
+    
 }
