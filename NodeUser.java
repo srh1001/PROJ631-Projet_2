@@ -29,45 +29,69 @@ public class NodeUser extends Node {
     public void addInterestData(Data data) {
     	interestData.put(data.getId(), data);
     }
-
-    public void placeData(String idData, Sysapp sys) {
+    
+    public Map<String, Object> findClosestNode(String idData, Sysapp sys) {
         // Get the data object with the given ID
         Data data = this.interestData.get(idData);
         if (data == null) {
-            System.out.println("Error: data with ID " + idData + " does not exist for this user.");
-            return;
+            System.out.println();
+            throw new IllegalStateException("Error: data with ID " + idData + " does not exist for this user.");
         }
-        
-        // Calculate shortest path to each system node
+
+        // Initialize variables to keep track of the shortest path and closest node
         Map<String, Object> shortestPath = null;
         Integer shortestLength = Integer.MAX_VALUE;
         NodeSystem closestNode = null;
+
+        // Iterate through all nodes in the system
         for (Node node : sys.getMapNodes().values()) {
+            // If the node is a system node and has enough memory capacity for the data, then check its shortest path
             if (node instanceof NodeSystem && ((NodeSystem) node).getMemoryCapacity() >= data.getSize()) {
-            	
-            	try {
+                
+                try {
+                    // Get the shortest path from this user node to the current system node
                     Map<String, Object> result = sys.getShortestPath(this.getId(), node.getId());
                     Integer length = (Integer) result.get("length");
+
+                    // If the path is shorter than the current shortest path, update the variables
                     if (length < shortestLength) {
-                    	shortestPath = result;
+                        shortestPath = result;
                         shortestLength = length;
                         closestNode = (NodeSystem) node;
                     }
-            	} catch (IllegalStateException e) {
-            	    System.out.println("Error: " + e.getMessage());
-            	}
-
+                } catch (IllegalStateException e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
             }
         }
+
+        // Create a map containing the shortest path, shortest length, and closest node
+        Map<String, Object> m = new HashMap<String, Object>();
+        m.put("shortestPath", shortestPath);
+        m.put("shortestLength", shortestLength);
+        m.put("closestNode", closestNode);
+        return m;
+    }
+
+    public void placeData(String idData, Sysapp sys) {
+
+        // Get the data object with the given ID
+        Data data = this.interestData.get(idData);
+        if (data == null) {
+            System.out.println();
+            throw new IllegalStateException("Error: data with ID " + idData + " does not exist for this user.");
+        }
         
+        // Find the system node closest to the user that has enough memory capacity to store the data
+        Map<String, Object> result = this.findClosestNode(idData, sys);
+        Node closestNode = (Node) result.get("closestNode");
         
-        
-        // Add data to system node with shortest path
+        // Add data to the system node with the shortest path
         if (closestNode != null) {
-        closestNode.addStoredData(data);
-        System.out.println("Data " + data.getId() + " placed at system node " + closestNode.getId() + " via path " + shortestPath);
-        }else {
-        	System.out.println("No system node with enough empty space for your data was found.");
+            ((NodeSystem) closestNode).addStoredData(data);
+            System.out.println("Data " + data.getId() + " placed at system node " + closestNode.getId() + " via path " + result.get("shortestPath"));
+        } else {
+            System.out.println("No system node with enough empty space for your data was found.");
         }
     }
 }

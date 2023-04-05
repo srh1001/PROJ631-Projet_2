@@ -35,14 +35,22 @@ public class Node {
 	}
 	
 	public void sortNeighborsByDistance() {
+	    // Create a list of entries from the neighbours map
 	    List<Map.Entry<String, Pair<Node, Integer>>> sortedList = new ArrayList<>(neighbours.entrySet());
+	    
+	    // Sort the list based on the distance between the current node and each neighbor node
 	    Collections.sort(sortedList, new Comparator<Map.Entry<String, Pair<Node, Integer>>>() {
 	        @Override
 	        public int compare(Map.Entry<String, Pair<Node, Integer>> o1, Map.Entry<String, Pair<Node, Integer>> o2) {
+	            // Compare the distances between the current node and each neighbor node
 	            return o1.getValue().getSecond().compareTo(o2.getValue().getSecond());
 	        }
 	    });
+	    
+	    // Create a new LinkedHashMap to store the sorted neighbours
 	    neighbours = new LinkedHashMap<>();
+	    
+	    // Add the sorted entries back to the LinkedHashMap
 	    for (Map.Entry<String, Pair<Node, Integer>> entry : sortedList) {
 	        neighbours.put(entry.getKey(), entry.getValue());
 	    }
